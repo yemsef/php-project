@@ -1,5 +1,6 @@
 <?php
 require 'navbar.php';
+require 'connection.php';
 ?>
 
 
@@ -77,7 +78,16 @@ require 'navbar.php';
                         <div class="w-full px-3 mb-5">
                             <button class="block w-full max-w-xs mx-auto bg-gray-900 hover:bg-gray-200 focus:bg-blue-700 text-white rounded-lg px-3 py-3 font-semibold">REGISTER NOW</button>
                         </div>
+                        
                     </div>
+                    <p class="text-center text-lg">
+      Already have an account?
+      <a
+        href="./login.php"
+        class="font-medium text-gray-900 underline-offset-4 hover:underline"
+        >Log in</a
+      >
+    </p>
                 </div>
             </div>
         </div>

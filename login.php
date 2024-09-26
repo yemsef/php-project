@@ -1,5 +1,6 @@
 <?php
-require 'navbar.php'
+require 'navbar.php';
+require 'connection.php';
 ?>
 
 
@@ -55,7 +56,7 @@ require 'navbar.php'
     <p class="text-center text-lg">
       No account?
       <a
-        href="#"
+        href="./signup.php"
         class="font-medium text-indigo-500 underline-offset-4 hover:underline"
         >Create One</a
       >

@@ -1,5 +1,23 @@
 <?php
 require 'navbar.php' ;
+require 'connection.php';
+
+
+
+$sql = "SELECT * FROM products ORDER BY created_at";
+$result = mysqli_query($conn,$sql);
+
+if ($result){
+    $product = mysqli_fetch_all($result, MYSQLI_ASSOC) ;
+    mysqli_free_result($result);
+    mysqli_close($conn);
+    print_r($products);
+
+}
+else {
+    echo " Query error:". mysqli_error($conn);
+}
+print_r($product);
 ?>
 
 
@@ -140,7 +158,7 @@ function sliderButton1(){
         </div>
 
         <!-- Centering wrapper -->
-        <div class="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-96">
+        <div class="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-96"> 
             <div class="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl h-96">
                 <img
                     src="https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=927&amp;q=80"
