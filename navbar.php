@@ -73,6 +73,7 @@
     
   </section>
 </div>
+
 <!-- Does this resource worth a follow? -->
 <!-- <div class="absolute bottom-0 right-0 mb-4 mr-4 z-10">
     <div>

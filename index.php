@@ -8,16 +8,15 @@ $sql = "SELECT * FROM products ORDER BY created_at";
 $result = mysqli_query($conn,$sql);
 
 if ($result){
-    $product = mysqli_fetch_all($result, MYSQLI_ASSOC) ;
+    $products = mysqli_fetch_all($result, MYSQLI_ASSOC) ;
     mysqli_free_result($result);
     mysqli_close($conn);
-    print_r($products);
 
 }
 else {
     echo " Query error:". mysqli_error($conn);
-}
-print_r($product);
+};
+
 ?>
 
 
@@ -142,58 +141,42 @@ function sliderButton1(){
         <button id="sButton1" onclick="sliderButton1()" class="bg-gray-900 rounded-full w-4 pb-2 " ></button>
     <button id="sButton2" onclick="sliderButton2() " class="bg-gray-900 rounded-full w-4 p-2"></button>
   </div>
-<section class="w-auto h-auto flex-wrap">
-    <!-- component -->
-<!-- component -->
-<div class="flex items-center min-h-screen">
-    <div class="max-w-[720px] mx-auto">
-        <div class="block mb-4 mx-auto border-b border-slate-300 pb-2 max-w-[360px]">
-            <a 
-                target="_blank" 
-                href="https://www.material-tailwind.com/docs/html/card" 
-                class="block w-full px-4 py-2 text-center text-slate-700 transition-all"
-            >
-                More collections of <b>Men Fashionable wears</b>.
-            </a>
-        </div>
 
-        <!-- Centering wrapper -->
-        <div class="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-96"> 
-            <div class="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white bg-clip-border rounded-xl h-96">
-                <img
-                    src="https://images.unsplash.com/photo-1629367494173-c78a56567877?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=927&amp;q=80"
-                    alt="card-image" class="object-cover w-full h-full" />
-            </div>
-            <div class="p-6">
-                <div class="flex items-center justify-between mb-2">
-                    <p class="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                        Apple AirPods
-                    </p>
-                    <p class="block font-sans text-base antialiased font-medium leading-relaxed text-blue-gray-900">
-                        $95.00
+
+  <div class="flex flex-wrap justify-evenly ">
+    <?php
+    if (!empty($products)) {
+        foreach ($products as $product) {
+    ?>
+        <div class="mx-5 mb-5 max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <a href="#">
+                <img style="height: 300px; width:500px;" class="p-8 rounded-t-lg" src="<?php echo htmlspecialchars($product['product_image']); ?>" alt="<?php echo htmlspecialchars($product['product_name']); ?>" />
+            </a>
+            <div class="px-5 pb-5">
+                <a href="#">
+                    <h5 class="text-xl font-semibold tracking-tight text-gray-900 dark:text-white"><?php echo htmlspecialchars_decode($product['product_name']) ?></h5>
+                </a>
+                <div class="flex items-center mt-2.5 mb-5">
+                    <p class="text-white">
+                        <?php echo htmlspecialchars($product['product_description']) ?>
                     </p>
                 </div>
-                <p class="block font-sans text-sm antialiased font-normal leading-normal text-gray-700 opacity-75">
-                    With plenty of talk and listen time, voice-activated Siri access, and an
-                    available wireless charging case.
-                </p>
-            </div>
-            <div class="p-6 pt-0">
-                <button
-                    class="align-middle select-none font-sans font-bold text-center uppercase transition-all disabled:opacity-50 disabled:shadow-none disabled:pointer-events-none text-xs py-3 px-6 rounded-lg shadow-gray-900/10 hover:shadow-gray-900/20 focus:opacity-[0.85] active:opacity-[0.85] active:shadow-none block w-full bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:scale-105 hover:shadow-none focus:scale-105 focus:shadow-none active:scale-100"
-                    type="button">
-                    Add to Cart
-                </button>
+                <div class="flex items-center justify-between">
+                    <span class="text-3xl font-bold text-gray-900 dark:text-white">$<?php echo htmlspecialchars($product['product_price']) ?></span>
+                    <a href="#" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add to cart</a>
+                </div>
             </div>
         </div>
-    </div>
+    <?php 
+        }
+    } else {
+        echo "No products found.";
+    }
+    ?>
 </div>
 
-</section>
-<?php
-
-require 'footer.php';
-?>
+  
+<?php require 'footer.php'; ?>
 </body>
 </html>
 
