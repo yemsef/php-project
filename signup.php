@@ -1,7 +1,50 @@
 <?php
 require 'navbar.php';
-require 'connection.php';
+require 'connection.php'; 
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
+
+    if ($password !== $confirm_password) {
+        die("Passwords do not match.");
+    }
+
+    
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        
+        die("User with this email already exists.");
+    } else {
+        
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    
+        $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $first_name, $last_name, $email, $hashed_password);
+        
+        if ($stmt->execute()) {
+            echo "Registration successful!";
+            
+            header("Location: login.php");
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    }
+    $stmt->close();
+}
+$conn->close();
 ?>
+
+
 
 
 
@@ -32,20 +75,21 @@ require 'connection.php';
                     <h1 class="font-bold text-3xl text-gray-900">REGISTER</h1>
                     <p>Enter your information to register</p>
                 </div>
+                <form action="signup.php" method="POST">
                 <div>
                     <div class="flex -mx-3">
                         <div class="w-1/2 px-3 mb-5">
                             <label for="" class="text-xs font-semibold px-1">First name</label>
                             <div class="flex">
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
-                                <input type="text" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="John">
+                                <input type="text" name="first_name" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="John">
                             </div>
                         </div>
                         <div class="w-1/2 px-3 mb-5">
                             <label for="" class="text-xs font-semibold px-1">Last name</label>
                             <div class="flex">
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-account-outline text-gray-400 text-lg"></i></div>
-                                <input type="text" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="Smith">
+                                <input type="text" name="last_name" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="Smith">
                             </div>
                         </div>
                     </div>
@@ -54,7 +98,7 @@ require 'connection.php';
                             <label for="" class="text-xs font-semibold px-1">Email</label>
                             <div class="flex">
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-email-outline text-gray-400 text-lg"></i></div>
-                                <input type="email" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="johnsmith@example.com">
+                                <input type="email" name="email" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="johnsmith@example.com">
                             </div>
                         </div>
                     </div>
@@ -63,14 +107,14 @@ require 'connection.php';
                             <label for="" class="text-xs font-semibold px-1">Password</label>
                             <div class="flex">
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-lock-outline text-gray-400 text-lg"></i></div>
-                                <input type="password" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="************">
+                                <input type="password" name="password" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="************">
                             </div>
                         </div>
                         <div class="w-full px-3 mb-12">
                             <label for="" class="text-xs font-semibold px-1">Confirm Password</label>
                             <div class="flex">
                                 <div class="w-10 z-10 pl-1 text-center pointer-events-none flex items-center justify-center"><i class="mdi mdi-lock-outline text-gray-400 text-lg"></i></div>
-                                <input type="password" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="************">
+                                <input type="password" name="confirm_password" class="w-full -ml-10 pl-10 pr-3 py-2 rounded-lg border-2 border-gray-900 outline-none focus:border-gray-900" placeholder="************">
                             </div>
                         </div>
                     </div>
@@ -89,6 +133,7 @@ require 'connection.php';
       >
     </p>
                 </div>
+                </form>
             </div>
         </div>
     </div>

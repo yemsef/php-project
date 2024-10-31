@@ -1,6 +1,41 @@
 <?php
 require 'navbar.php';
+session_start();
+
 require 'connection.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+
+    
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        
+        
+        if (password_verify($password, $user['password'])) {
+            
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['email'] = $user['email'];
+            header("location: dashboard.php" );
+            exit();
+        } else {
+            echo "<h2 style='color:red;'>invalid password!'</h2>";
+        }
+    } else {
+        echo "No user found with that email.";
+    }
+
+    $stmt->close();
+}
+$conn->close();
 ?>
 
 
@@ -12,12 +47,14 @@ require 'connection.php';
     <title>Document</title>
 </head>
 <body>
+  
     <!-- component -->
 <!-- page -->
 <main
   class="mx-auto flex min-h-screen w-full items-center justify-center bg-gray-900 text-white"
 >
   <!-- component -->
+   <form action="login.php" method="POST">
   <section class="flex w-[30rem] flex-col space-y-10">
     <div class="text-center text-4xl font-medium">Log In</div>
 
@@ -25,7 +62,7 @@ require 'connection.php';
       class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
     >
       <input
-        type="text"
+        type="text" name="email"
         placeholder="Email or Username"
         class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
       />
@@ -35,7 +72,7 @@ require 'connection.php';
       class="w-full transform border-b-2 bg-transparent text-lg duration-300 focus-within:border-indigo-500"
     >
       <input
-        type="password"
+        type="password" name="password"
         placeholder="Password"
         class="w-full border-none bg-transparent outline-none placeholder:italic focus:outline-none"
       />
@@ -62,6 +99,7 @@ require 'connection.php';
       >
     </p>
   </section>
+  </form>
 </main>
     
 </body>
