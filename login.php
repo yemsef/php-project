@@ -1,7 +1,6 @@
 <?php
 require 'navbar.php';
 session_start();
-
 require 'connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -10,33 +9,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = trim($_POST['password']);
 
     
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        
-        
-        if (password_verify($password, $user['password'])) {
-            
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            header("location: dashboard.php" );
-            exit();
-        } else {
-            echo "<h2 style='color:red;'>invalid password!'</h2>";
-        }
+    if (empty($email) || empty($password)) {
+        echo "<h2 style='color:red;'>Please enter both email and password.</h2>";
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<h2 style='color:red;'>Invalid email format.</h2>";
     } else {
-        echo "No user found with that email.";
-    }
+        
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    $stmt->close();
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+          
+            if (password_verify($password, $user['password'])) {
+                // Regenerate session ID
+                session_regenerate_id(true);
+
+                // Store user details in the session
+                $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['email'] = $user['email'];
+
+                // Redirect to dashboard
+                echo "<script>
+                        alert('Login successful!');
+                        window.location.href = 'dashboard.php';
+                      </script>";
+                exit();
+            } else {
+                echo "<h2 style='color:red;'>Invalid password!</h2>";
+            }
+        } else {
+            echo "<h2 style='color:red;'>No user found with that email.</h2>";
+        }
+
+        $stmt->close();
+    }
 }
+
 $conn->close();
 ?>
+
 
 
 

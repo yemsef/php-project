@@ -31,9 +31,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("ssss", $first_name, $last_name, $email, $hashed_password);
         
         if ($stmt->execute()) {
-            echo "Registration successful!";
-            
-            header("Location: login.php");
+            echo "<script>
+                    alert('Registration successful!');
+                    window.location.href = 'login.php';
+                  </script>";
             exit();
         } else {
             echo "Error: " . $stmt->error;
